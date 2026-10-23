@@ -1,0 +1,79 @@
+{
+  "sets": {
+    "company:2027-Q1": {
+      "level": "company",
+      "period": "2027-Q1",
+      "status": "active",
+      "owner": "CEO",
+      "last_checkin": "2026-10-20",
+      "objectives": [
+        {
+          "id": "CO-1",
+          "objective": "Make self-serve a profitable growth channel",
+          "owner": "VP Growth"
+        },
+        {
+          "id": "CO-2",
+          "objective": "Keep enterprise customers expanding",
+          "owner": "VP Customer"
+        }
+      ],
+      "key_results": [
+        {
+          "id": "C-KR-1",
+          "objective": "CO-1",
+          "key_result": "Self-serve new MRR",
+          "baseline": "$18k/month",
+          "target": "$40k/month",
+          "deadline": "2027-03-31",
+          "current": "$21k/month",
+          "status": "at_risk",
+          "owner": "VP Growth"
+        },
+        {
+          "id": "C-KR-2",
+          "objective": "CO-1",
+          "key_result": "Self-serve CAC payback",
+          "baseline": "9 months",
+          "target": "< 6 months",
+          "deadline": "2027-03-31",
+          "current": "8.5 months",
+          "status": "at_risk",
+          "owner": "VP Growth"
+        },
+        {
+          "id": "C-KR-3",
+          "objective": "CO-2",
+          "key_result": "Net revenue retention (enterprise)",
+          "baseline": "108%",
+          "target": ">= 115%",
+          "deadline": "2027-03-31",
+          "current": "109%",
+          "status": "on_track",
+          "owner": "VP Customer"
+        },
+        {
+          "id": "C-KR-4",
+          "objective": "CO-2",
+          "key_result": "New enterprise ARR",
+          "baseline": "$0 (new KR)",
+          "target": "$250k",
+          "deadline": "2027-03-31",
+          "current": "$90k",
+          "status": "at_risk",
+          "owner": "VP Sales"
+        }
+      ],
+      "proposals": [
+        {
+          "date": "2026-10-22",
+          "from": "reporting",
+          "proposal": "Agregar un KR de nuevo negocio enterprise bajo CO-2 (o un objetivo nuevo), p. ej. win rate enterprise o nuevo ARR enterprise, para que los equipos que trabajan en adquisición enterprise puedan vincularse a él.",
+          "reason": "El equipo reporting tiene un KR sobre deals enterprise perdidos con prospects nuevos (3/trimestre → ≤1). El único KR enterprise de la compañía, C-KR-3 (NRR), mide clientes existentes, así que hoy ese trabajo no aporta a ningún KR de la compañía.",
+          "status": "accepted"
+        }
+      ],
+      "checkins": []
+    }
+  }
+}

@@ -1,43 +1,51 @@
-# OKR Impact Framing — configuration
+# OKR Bets — configuration
 # Copy to .specify/extensions/okr/okr-config.yml and customize.
 # Local overrides: .specify/extensions/okr/okr-config.local.yml (gitignored).
-# Every key is optional; the defaults below apply when the file is absent.
+# Every key is optional.
 
-alignment:
-  # Path (relative to the project root) to the team/company OKRs this work should
-  # ladder up to. When set, /speckit.okr.frame asks which parent Objective the
-  # feature supports and refuses to invent one that is not in this file.
-  parent_okrs_file: ""        # e.g. "docs/okrs/2026-Q4.md"
+period: ""                    # e.g. "2027-Q1"; empty → derived from today's date and `horizon`
+horizon: "quarter"            # quarter | half | year
+team: ""                      # your team id, e.g. "reporting"
 
-  # Default time horizon for Key Result targets.
-  horizon: "quarter"          # quarter | half | year | custom
+levels:
+  company:
+    source: "file"            # file | mcp
+    # file source: the source of truth. mcp source: a local read-only mirror.
+    path: ".specify/okr/company/{period}.md"
+    agent_writes: "propose"   # none | propose | confirm — agents never edit company OKRs unless "confirm"
+    cadence_days: 30
+    mcp:
+      server: ""              # MCP server name as configured in your agent (e.g. "okr-tool")
+      tools:                  # operation → tool name exposed by that server
+        read: ""
+        update_kr: ""
+        add_checkin: ""
+        propose: ""
+  team:
+    source: "file"
+    path: ".specify/okr/teams/{team}/{period}.md"
+    agent_writes: "confirm"   # show the exact change and wait for a yes
+    cadence_days: 14
+    mcp:
+      server: ""
+      tools: { read: "", update_kr: "", add_checkin: "", propose: "" }
 
 key_results:
-  min: 2                      # fewer than this → framing is incomplete
-  max: 4                      # more than this → the feature is probably two features
-  require_baseline: true      # every KR needs a current value (or an explicit "unknown + how we'll get it")
-  require_deadline: true
-  require_owner: true
-  require_counter_metric: true   # at least one guardrail that must not get worse
+  min: 2                      # per objective
+  max: 4
 
 scoring:
-  # Google-style 0.0–1.0 scoring. Committed KRs are expected at 1.0;
-  # aspirational KRs land well around `aspirational_target`.
   aspirational_target: 0.7
   thresholds:
-    persevere: 0.7            # score >= this → keep going / scale
-    iterate: 0.4              # between iterate and persevere → iterate on the solution
-                              # below iterate → pivot or stop
+    persevere: 0.7
+    iterate: 0.4
 
 initiatives:
-  require_leading_signal: true   # every initiative (user story) needs an early, observable behavior
+  require_leading_signal: true   # validation stories always need one; this extends it to scale stories
 
 interview:
-  max_questions: 8            # cap on primary questions per session
-  follow_ups_per_question: 1  # clarifications of an answer; they do not count toward the cap
+  max_questions: 8            # primary questions; mode=lite uses 3
+  follow_ups_per_question: 1  # do not count toward the cap
 
 output:
-  # Language for the body text of okr.md / measurement-plan.md / reviews.
-  # "auto" = the language of the conversation. Headings, IDs, and status values
-  # always stay in English so the okr commands can parse them.
-  artifact_language: "en"
+  artifact_language: "auto"   # body text language; headings, IDs and statuses stay in English

@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Onboarding guiado para equipos self-serve
+# Specification Quality Checklist: Compartir reportes con stakeholders sin cuenta
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-10-22
@@ -28,9 +28,11 @@
 - [x] User scenarios cover primary flows
 - [x] Feature meets measurable outcomes defined in Success Criteria
 - [x] No implementation details leak into specification
-
-- [x] User stories trace to Key Results as initiatives (see okr.md)
+- [x] Spec is the initiative that tests okr:reporting/H-1 (validation slice is P1)
 
 ## Notes
 
-- Checklist passes. Note: the wizard mentions Slack / Google Drive as user-facing integration names, not implementation.
+- Iteration 1: 2 `[NEEDS CLARIFICATION]` markers open — US1 "Why this priority" (medio del P1: email vs. PDF) and FR-010 (destinatarios permitidos). Pending user answers.
+- Iteration 2: resolved by the PM — Q1: A (email in P1, PDF as P3 scale), Q2: C (open by default, admin can restrict to approved domains; FR-010, new US1 scenario 5, new entity). All items pass.
+- "GrowthBook" appears only in the verbatim Input line; requirements say "grupo piloto" without naming a tool.
+- Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`

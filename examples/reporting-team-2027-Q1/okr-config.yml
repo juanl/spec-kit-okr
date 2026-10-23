@@ -1,0 +1,18 @@
+period: "2027-Q1"
+team: "reporting"
+levels:
+  company:
+    source: "mcp"
+    path: ".specify/okr/company/{period}.md"
+    agent_writes: "propose"
+    cadence_days: 30
+    mcp:
+      server: "okr-tool"
+      tools: { read: "get_okr_set", update_kr: "update_kr", add_checkin: "add_checkin", propose: "propose_change" }
+  team:
+    source: "file"
+    path: ".specify/okr/teams/{team}/{period}.md"
+    agent_writes: "confirm"
+    cadence_days: 14
+output:
+  artifact_language: "auto"

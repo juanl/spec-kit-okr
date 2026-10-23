@@ -1,0 +1,30 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        specify: ["0.16.2"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Static checks
+        run: uv run --no-project --python 3.12 --with "specify-cli==${{ matrix.specify }}" --with pytest python -m pytest -q tests
+      - name: Install into a fresh Spec Kit project
+        run: |
+          uv tool install "specify-cli==${{ matrix.specify }}"
+          mkdir /tmp/demo && cd /tmp/demo
+          specify init --here --integration claude --script sh --ignore-agent-tools --force < /dev/null
+          specify extension add --dev "$GITHUB_WORKSPACE" < /dev/null
+          specify preset add --dev "$GITHUB_WORKSPACE/preset" < /dev/null
+          test -f .specify/extensions/okr/docs/okr-sources.md
+          test ! -e .specify/extensions/okr/.git
+          ls .claude/skills | grep -c speckit-okr- | grep -qx 7
+          grep -q "okr-bet preset" .claude/skills/speckit-specify/SKILL.md
+          specify preset resolve spec-template | grep -q "okr-bet"

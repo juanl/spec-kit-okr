@@ -1,172 +1,133 @@
-# OKR Impact Framing — a Spec Kit extension
+# OKR Bets — a Spec Kit extension
 
-Scope features by the **impact they must produce**, not by the list of things someone wants built.
-
-This extension adds an OKR step around `/speckit.specify`. Before (or after) the spec is written, it walks you through the questions OKRs force you to answer:
-
-- **Objective**: what will be different, and for whom?
-- **Key Results**: how will we know? From what baseline to what target, by when?
-- **Hypothesis**: why do we believe this feature moves that number?
-- **Guardrails**: what must not get worse?
-- **Measurement**: can we actually read these numbers on launch day?
-
-The answers end up in the spec as **initiatives** (user stories ranked by the Key Results they move), in the plan as instrumentation work, and after launch in a scored check-in.
+**Every spec is a bet.** It tests a hypothesis the team holds about how to move one of its Key Results. This extension makes the bet explicit before `/speckit.specify`, keeps company and team OKRs alive while the work ships, and gives a verdict after launch that decides whether the bet gets scaled.
 
 ```text
-Objective  (okr.md)       what changes, for whom
-└─ Key Results (okr.md)   how we will know: baseline → target by date
-   └─ Initiatives (spec.md user stories)   the bets we make to move each KR
+Company   CO-n / C-KR-n            in the repo, or in your OKR tool via MCP
+└─ Team   O-n / KR-n               each KR says which company KR it moves
+   └─ Hypothesis H-n               several bets per KR
+      └─ Spec = the initiative     P1 validates the hypothesis; P2+ scale only if it holds
 ```
 
-## Workflow
+## What it adds to the workflow
 
 ```text
-           ┌──────────────────┐
-  idea ──▶ │ /speckit.okr.frame│  OKR interview → .specify/okr/<slug>/okr.md
-           └────────┬─────────┘     (before_specify hook, optional)
-                    ▼
-           ┌──────────────────┐
-           │ /speckit.specify  │  spec.md, written against the KRs
-           └────────┬─────────┘
-                    ▼
-           ┌──────────────────┐
-           │ /speckit.okr.align│  user stories → ranked initiatives per KR, SC ↔ KR coverage
-           └────────┬─────────┘     (after_specify hook; post-hoc interview if no framing exists)
-                    ▼
-           ┌──────────────────┐
-           │ /speckit.plan     │
-           └────────┬─────────┘
-                    ▼
-           ┌───────────────────┐
-           │/speckit.okr.measure│ metric definitions, instrumentation, baseline capture,
-           └────────┬──────────┘ attribution → "Measurement & Instrumentation" in plan.md
-                    ▼               (after_plan hook)
-        /speckit.tasks → /speckit.implement
-                    ▼
-           ┌──────────────────┐
-           │/speckit.okr.review│  post-launch: score KRs, read leading signals,
-           └──────────────────┘  diagnose each initiative, persevere / iterate / pivot / stop
+/speckit.okr.set      team (or company) OKRs for the period — living documents
+        │
+/speckit.okr.frame    idea → bet: which KR, the hypothesis, "refuted if…", guardrails   (before_specify hook)
+        │
+/speckit.specify      with the okr-bet preset: writes the Hypothesis & Bet section, P1 = validation slice
+        │
+/speckit.okr.align    checks that the spec can test its bet; frames one post-hoc if missing   (after_specify hook)
+        │
+/speckit.plan → /speckit.okr.measure    instrumentation, baselines, attribution, check-in calendar   (after_plan hook)
+        │
+/speckit.tasks → /speckit.implement     measurement lands as tasks before the validation slice
+        │
+/speckit.okr.review   verdict on the hypothesis: validated / refuted / inconclusive → unlocks or stops P2+
+        │
+/speckit.okr.checkin  team (or company) check-in: KR statuses, roll-up of verdicts, proposals upward, period close
+/speckit.okr.status   the whole tree, stale sets, orphaned work, ladder gaps (read-only)
 ```
 
-You can enter at either point:
+All hooks are optional. Every command also runs on its own.
 
-- **OKR-first** (recommended): `frame` → `specify` → `align`. The spec is scoped by the KRs from the beginning.
-- **Spec-first**: `specify` → `align`. `align` drafts the OKRs from the spec and interviews you only about what the spec cannot answer, usually baselines, targets, owners, and guardrails.
+## Why
 
-## Commands
+In a typical spec, the Success Criteria are acceptance thresholds ("users can export in under a minute"). They say nothing about whether the feature was worth building. In testing with a real agent, the extension caught issues like these:
 
-| Command | Hook | Writes |
-|---------|------|--------|
-| `/speckit.okr.frame` | `before_specify` (optional) | `.specify/okr/<slug>/okr.md` |
-| `/speckit.okr.align` | `after_specify` (optional) | `specs/<feature>/okr.md`; `spec.md` edits (only with your approval) |
-| `/speckit.okr.measure` | `after_plan` (optional) | `specs/<feature>/measurement-plan.md`; a section in `plan.md` |
-| `/speckit.okr.review` | — | `specs/<feature>/okr-reviews/<date>.md`; check-in history in `okr.md` |
+- **A solution that could not move its own goal.** The request was "reminders for overdue tasks", but the goal was on-time completion, which a reminder sent after the due date cannot improve. The bet gained a pre-due reminder as its P1.
+- **A requested solution that could not validate the hypothesis.** The request was "export to PDF", but a download does not show that the report reached anyone. The spec put email sharing at P1 and moved the PDF to a scale story.
+- **KRs that ladder to nothing.** A team's KR on lost *new* enterprise deals was linked to the company's net revenue retention KR, which measures existing customers. The extension flagged the mismatch and sent a proposal to the company OKR owner through MCP. The owner accepted it, and the next status run surfaced the new company KR as a ladder opportunity.
+- **Unreadable KRs.** It found events tracked per account while the KR counted users, a KR deadline that came before its observation period ended, and a pilot too small to move a global KR within the quarter.
+- **A guardrail breach.** Report-page latency went up 14%. The review used the holdout to check whether the feature caused it, before deciding on a rollback.
 
-All hooks are **optional**. Spec Kit offers to run them, and you can always run the commands by hand.
+## Install
 
-### After launch: why did it (not) work?
+Requires Spec Kit `>= 0.9.0` (tested with 0.16.2).
 
-`review` reads each initiative's leading signal against its KR. *Signal moved but KR flat* means the hypothesis is wrong, so pivot. *Signal flat* means users are not adopting the initiative, so iterate on it. This way a check-in tells you **where** the bet failed, not only **that** it did.
+```bash
+specify extension add --dev /path/to/spec-kit-okr           # the extension
+specify preset add --dev /path/to/spec-kit-okr/preset       # recommended: Hypothesis & Bet section in specs
+```
 
-### What the interview feels like
+The **`okr-bet` preset** composes with your spec template (`append`) and with `/speckit.specify` (`append`), so it doesn't replace anything. Without it, `/speckit.okr.align` inserts the section afterwards.
 
-Questions come one at a time, each with a recommended answer derived from what is already known:
+## Configure
+
+Copy `okr-config.template.yml` to `.specify/extensions/okr/okr-config.yml`:
+
+```yaml
+period: "2027-Q1"
+team: "reporting"
+levels:
+  company:
+    source: mcp                 # or: file
+    agent_writes: propose       # agents never edit company OKRs; they file proposals
+    mcp:
+      server: okr-tool
+      tools: { read: get_okr_set, update_kr: update_kr, add_checkin: add_checkin, propose: propose_change }
+  team:
+    source: file                # .specify/okr/teams/{team}/{period}.md
+    agent_writes: confirm       # show the exact change, wait for a yes
+```
+
+| Key | Default | Meaning |
+|-----|---------|---------|
+| `levels.<level>.source` | `file` | `file`: the markdown set is the source of truth. `mcp`: an OKR tool behind an MCP server is the source of truth, and a local mirror records `Synced at` |
+| `levels.<level>.agent_writes` | company `propose`, team `confirm` | `none` / `propose` / `confirm` |
+| `levels.<level>.cadence_days` | 30 / 14 | Commands warn when a set's last check-in is older than this |
+| `key_results.min` / `max` | 2 / 4 | KRs per objective |
+| `scoring.thresholds` | 0.7 / 0.4 | Persevere / iterate thresholds |
+| `interview.max_questions` | 8 | Primary questions (follow-ups don't count). `mode=lite` on `frame` uses 3 |
+| `output.artifact_language` | `auto` | Body text language. Headings, IDs and statuses stay in English |
+
+> Removing and re-adding the extension deletes `.specify/extensions/okr/`, including your config. Keep a copy, or put your overrides in `okr-config.local.yml` and back it up.
+
+### Trying the MCP path
+
+`tools/mock-okr-mcp/` contains a small MCP server, backed by a JSON file, that implements the four operations the extension expects (`get_okr_set`, `update_kr`, `add_checkin`, `propose_change`). It logs every call, so you can check what the agent did:
+
+```bash
+uv run --python 3.12 --with mcp==1.12.4 --with pydantic==2.11.7 tools/mock-okr-mcp/server.py data.json
+```
+
+For a real OKR tool, map the four operations to its MCP server's tools under `levels.<level>.mcp.tools`.
+
+## Artifacts
 
 ```text
-Q2 — Key Results: What is 7-day activation today, and where does that number come from?
-
-Recommended: "Unknown. Capture it from the `onboarding_completed` event for 2 weeks
-before rollout." No baseline appears in the input or the codebase, and the event
-already exists.
-
-Reply "yes" to accept, or give your own answer.
-```
-
-Weak Key Results get coached rather than accepted, for example "Launch the new onboarding" → *that's an output; what should it change?* → "Raise 7-day activation from 32% to 45% by 2026-12-31".
-
-### What lands in the spec
-
-After `align`, each user story is an initiative with a KR, a hypothesis, and a leading signal. Its priority reflects impact × confidence, and when confidence is low, P1 is the story that validates the riskiest assumption:
-
-```markdown
-### User Story 1 - Guided first-project checklist (Priority: P1)
-...
-**Initiative → KR-1** · Hypothesis: teams that reach a first shared project see value before the
-trial ends · Leading signal: % of new teams completing the checklist by day 3 · Confidence: low
-```
-
-Success Criteria point at the KR they provide evidence for, and the spec gains one section:
-
-```markdown
-- **SC-002**: 80% of new users finish setup in their first session *(→ KR-1)*
-
-## Impact & Objectives (OKR)
-
-**Objective**: New teams get to their first useful result without help
-**Framing**: [okr.md](./okr.md)
-
-| KR | Target | Initiatives | Evidenced by |
-|----|--------|-------------|--------------|
-| KR-1 | 32% → 45% 7-day activation by 2026-12-31 | US-1 (P1), US-3 (P2) | SC-002 |
-
-**Guardrails**: G-1 setup-related support tickets must not exceed 40/week
-**Out of scope (no KR impact this horizon)**: theming, SSO
+.specify/okr/
+├── company/2027-Q1.md                      company set (or mirror of the MCP source)
+└── teams/reporting/
+    ├── 2027-Q1.md                          team set: KRs, hypotheses, check-ins, proposals, change log, period close
+    └── bets/H-1-stakeholder-report-sharing.md   one bet: hypothesis, refutation, guardrails, ideas, stories, reviews
+specs/001-…/
+├── spec.md                                 Input carries okr:reporting/H-1; Hypothesis & Bet section
+├── measurement-plan.md
+└── okr-reviews/2027-03-31.md
 ```
 
 ## Example
 
-See [examples/self-serve-guided-onboarding](examples/self-serve-guided-onboarding/) for a full run (frame → specify → align → plan → measure → tasks → review) on a fictional SaaS.
+[`examples/reporting-team-2027-Q1`](examples/reporting-team-2027-Q1/) is a real run with Claude Code in headless mode. It goes through set → frame → specify (with the preset) → align → review → close check-in → status, with company OKRs served by the mock MCP server. The transcripts and every generated artifact are included, along with the MCP call log, which shows four reads, one proposal, and no edits to company OKRs. The post-launch numbers are hypothetical and marked SIMULATED.
 
-## Installation
+## Limits
 
-Requires Spec Kit `>= 0.9.0`.
-
-```bash
-# from a local checkout
-specify extension add --dev /path/to/spec-kit-okr
-
-# from a release archive
-specify extension add okr --from https://github.com/jladetto/spec-kit-okr/archive/refs/tags/v0.1.0.zip
-```
-
-Check it is installed:
-
-```bash
-specify extension list
-```
-
-## Configuration
-
-Optional. Copy `okr-config.template.yml` to `.specify/extensions/okr/okr-config.yml`:
-
-| Key | Default | Purpose |
-|-----|---------|---------|
-| `alignment.parent_okrs_file` | `""` | Team/company OKRs the feature must ladder up to. When set, parent Objectives are chosen from this file only |
-| `alignment.horizon` | `quarter` | Default KR deadline horizon |
-| `key_results.min` / `max` | `2` / `4` | KR count bounds. More than `max` usually means two features |
-| `key_results.require_*` | `true` | Baseline, deadline, owner, and counter-metric requirements for the quality gate |
-| `scoring.aspirational_target` | `0.7` | Expected score for aspirational KRs |
-| `scoring.thresholds.persevere` / `iterate` | `0.7` / `0.4` | Default decision thresholds for `review` |
-| `initiatives.require_leading_signal` | `true` | Every user story needs an early, observable behavior |
-| `interview.max_questions` | `8` | Cap on primary questions (follow-ups don't count) |
-| `interview.follow_ups_per_question` | `1` | Clarifications allowed per answer |
-| `output.artifact_language` | `en` | Body language of the artifacts (`auto` = the conversation's). Headings and IDs stay in English |
-
-## Works well with
-
-- **`assess`** (bundled): if `.specify/assessments/<slug>/problem.md` exists, `frame` reuses its problem statement, users, goals, and metrics instead of asking for them again.
-- **`/speckit.clarify`**: open OKR questions are marked `[NEEDS CLARIFICATION]` in the spec, so clarify picks them up.
-
-## Design principles
-
-- **Outcomes over outputs.** "Ship X" is an initiative, not a Key Result.
-- **No invented numbers.** An unknown baseline is recorded as unknown, along with how it will be obtained.
-- **Measurement is part of the Definition of Done.** Instrumentation and baseline capture become tasks, not afterthoughts.
-- **The human decides.** Spec edits need approval. Review decisions record what the user chose, not what the agent recommended.
+- **Validation so far.** Testing used a PM persona answering from a fixed fact sheet, not real PMs. The real-agent cost was about $1–2 for a set or a frame, about $1–3 for an align, and about $7 for a full feature cycle, most of it in the core `plan` and `tasks` commands.
+- **Not worth it for small work.** Bugs, small changes, and tech debt don't need the full framing. Use `frame mode=lite`, or treat the work as an enabling initiative (`okr:<team>/enabling:<KR|guardrail>`).
+- **Prompts, not code.** The extension is a set of agent instructions. How well it does depends on the agent following them. The rules that matter most are the write policies, the ban on invented numbers, and the dry-run mode, and they are stated in every command.
+- **Agent memory.** Some agents keep their own memory across sessions, and may store facts from an OKR interview. That is outside this extension's control.
 
 ## Resumen en español
 
-Extensión de Spec Kit que acota el alcance de una feature con la lógica de los OKRs, antes o después de `/speckit.specify`. `frame` hace una entrevista guiada (Objetivo, Key Results con línea base y meta, hipótesis, guardrails, alcance). `align` convierte las user stories del spec en iniciativas: cada una con el KR que mueve, su hipótesis y su señal leading, priorizadas por impacto × confianza. `measure` agrega al plan la instrumentación y la captura de la línea base. `review` puntúa los KRs después del lanzamiento, cruza las señales de cada iniciativa con su KR para diagnosticar dónde falló la apuesta, y registra la decisión. Los comandos responden en el idioma del usuario.
+Extensión para Spec Kit que trata cada spec como una **apuesta**: una iniciativa que pone a prueba una hipótesis sobre cómo mover un Key Result del equipo. Los OKRs de compañía y de equipo son documentos vivos, que pueden estar en el repo o en una herramienta externa vía MCP, y el agente solo propone cambios a los de compañía. El ciclo es:
+
+- `frame`: antes del spec, define la apuesta (KR, hipótesis, "se refuta si…", guardrails).
+- El preset `okr-bet`: hace que el spec nazca con esa sección y con P1 como slice de validación.
+- `measure`: deja la medición lista para el día del lanzamiento.
+- `review`: da el veredicto sobre la hipótesis, que habilita o frena el escalado.
+- `checkin` y `status`: mantienen vivos los OKRs, consolidan resultados, proponen cambios hacia arriba y detectan trabajo huérfano.
 
 ## License
 

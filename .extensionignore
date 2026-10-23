@@ -5,3 +5,6 @@ CHANGELOG.md
 .pytest_cache/
 __pycache__/
 examples/
+preset/
+tools/
+.git/
