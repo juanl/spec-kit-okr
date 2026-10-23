@@ -7,8 +7,8 @@ extension:
   description: "Treat every spec as a bet on a team Key Result: living company and team OKRs (in the repo or via MCP), a hypothesis with a refutation criterion before /speckit.specify, measurement planned into the plan, and a verdict after launch that gates scaling"
   category: "process"
   effect: "read-write"
-  author: "jladetto"
-  repository: "https://github.com/jladetto/spec-kit-okr"
+  author: "juanl"
+  repository: "https://github.com/juanl/spec-kit-okr"
   license: MIT
 
 requires:

@@ -8,3 +8,4 @@ examples/
 preset/
 tools/
 .git/
+.obsidian/

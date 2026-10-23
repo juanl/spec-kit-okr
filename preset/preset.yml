@@ -5,8 +5,8 @@ preset:
   name: "OKR Bet Spec Section"
   version: "0.1.0"
   description: "Adds a Hypothesis & Bet section to every spec and teaches /speckit.specify to fill it from an okr:<team>/H-n bet. Companion of the okr extension."
-  author: "jladetto"
-  repository: "https://github.com/jladetto/spec-kit-okr"
+  author: "juanl"
+  repository: "https://github.com/juanl/spec-kit-okr"
   license: "MIT"
 
 requires:
