@@ -1,0 +1,71 @@
+schema_version: "1.0"
+
+extension:
+  id: okr
+  name: "OKR Impact Framing"
+  version: "0.1.0"
+  description: "Frame a feature's scope with OKRs before or after /speckit.specify: an Objective, measurable Key Results with baselines and targets, guardrails, and a measurement plan so the feature's impact can be proven after it ships"
+  category: "process"
+  effect: "read-write"
+  author: "jladetto"
+  repository: "https://github.com/jladetto/spec-kit-okr"
+  license: MIT
+
+requires:
+  speckit_version: ">=0.9.0"
+  commands:
+    - "speckit.specify"
+
+provides:
+  commands:
+    - name: speckit.okr.frame
+      file: commands/speckit.okr.frame.md
+      description: "OKR interview before specifying: Objective, Key Results (baseline → target), hypothesis, guardrails, and boundaries"
+    - name: speckit.okr.align
+      file: commands/speckit.okr.align.md
+      description: "Bind OKRs to the feature spec: turn user stories into ranked initiatives against Key Results, trace Success Criteria, flag gaps"
+    - name: speckit.okr.measure
+      file: commands/speckit.okr.measure.md
+      description: "Turn each Key Result and initiative leading signal into a measurement plan (definition, source, instrumentation, owner, cadence) and feed it to the plan"
+    - name: speckit.okr.review
+      file: commands/speckit.okr.review.md
+      description: "Post-launch check-in: score Key Results, read initiative leading signals and guardrails, and decide persevere / iterate / pivot / stop"
+
+  templates:
+    - name: okr-template
+      file: templates/okr-template.md
+      description: "Structure of the okr.md artifact"
+    - name: measurement-plan-template
+      file: templates/measurement-plan-template.md
+      description: "Structure of the measurement-plan.md artifact"
+
+  config:
+    - name: "okr-config.yml"
+      template: "okr-config.template.yml"
+      description: "Alignment source, Key Result rules, scoring, and interview limits"
+      required: false
+
+hooks:
+  before_specify:
+    command: speckit.okr.frame
+    optional: true
+    prompt: "Before writing the spec: define the impact this feature must produce and how you will measure it (OKR interview, ~8 questions)?"
+    description: "Run the OKR interview so the spec is scoped by the impact it must produce"
+  after_specify:
+    command: speckit.okr.align
+    optional: true
+    prompt: "Check that the user stories can actually move the Key Results, and re-prioritize them by impact (no OKRs yet? it will ask for them)?"
+    description: "Bind the spec to Key Results, or run the OKR interview post-hoc if no framing exists"
+  after_plan:
+    command: speckit.okr.measure
+    optional: true
+    prompt: "Make sure the Key Results are readable on launch day: add instrumentation, baselines, and rollout dates to the plan?"
+    description: "Make instrumentation and baseline capture part of the plan so /speckit.tasks generates them"
+
+tags:
+  - "okr"
+  - "product"
+  - "metrics"
+  - "impact"
+  - "discovery"
+  - "workflow"

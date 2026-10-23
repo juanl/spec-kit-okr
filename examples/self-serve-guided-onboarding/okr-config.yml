@@ -1,0 +1,5 @@
+alignment:
+  parent_okrs_file: "docs/okrs/2026-Q4.md"
+  horizon: "quarter"
+output:
+  artifact_language: "es"

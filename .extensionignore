@@ -1,0 +1,7 @@
+tests/
+.github/
+.gitignore
+CHANGELOG.md
+.pytest_cache/
+__pycache__/
+examples/
