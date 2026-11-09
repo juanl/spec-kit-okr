@@ -1,10 +1,12 @@
 ---
-description: "Create or update a company or team OKR set for a period: objectives, Key Results with baselines, ladder to company KRs, team guardrails"
+description: "Create or update the team OKR set for a period (objectives, Key Results with baselines, ladder to company KRs, team guardrails), or import a read-only copy of the company OKRs"
 ---
 
-# Set OKRs (company or team)
+# Set OKRs (team) or import company OKRs
 
-Create or update the OKR set of one level (company or team) for one period. Feature bets (`__SPECKIT_COMMAND_OKR_FRAME__`) hang from the team set, and the team set ladders up to the company set. Both sets are living documents: check-ins update them (`__SPECKIT_COMMAND_OKR_CHECKIN__`), and this command changes their content.
+Create or update the team OKR set for one period, or import the company OKRs. Feature bets (`__SPECKIT_COMMAND_OKR_FRAME__`) hang from the team set, and the team set ladders up to the company OKRs. The team set is a living document: check-ins update it (`__SPECKIT_COMMAND_OKR_CHECKIN__`), and this command changes its content.
+
+The company OKRs are **context, not something this command manages**. With `level=company` it only imports a faithful, read-only copy, so the team can see where its work impacts.
 
 **First, read `.specify/extensions/okr/docs/okr-sources.md` and `.specify/extensions/okr/docs/interview-and-kr-quality.md`, and follow them.**
 
@@ -20,14 +22,14 @@ Arguments (all optional): `level=team|company` (default `team`), `team=<id>`, `p
 
 1. Resolve `level`, `team`, and `period` from the arguments and the config. If `team` is unknown, ask once and suggest saving it in `okr-config.yml`.
 2. Resolve the level's source and write policy:
-   - **`level=company` with `agent_writes` other than `confirm`**: you may not author the company set. Offer to **import** it instead (`from=`, pasted text, or an MCP read), so the mirror reflects what leadership decided. Any change beyond a faithful import goes to **Proposals**.
-   - **`source: mcp`**: read the current set through the `read` tool first. Writes go through `update_kr` / `propose`, as allowed.
+   - **`level=company`**: never author or change the company OKRs. The only action is an **import** (`from=`, pasted text, or an MCP `read`) into the company copy, refreshing `Synced at`.
+   - **`source: mcp`**: read the current set through the `read` tool first. For the team level, writes go through `update_kr` / `propose`, as allowed.
 3. Read the existing set if there is one: resume it, and interview only for what is missing or `[NEEDS CLARIFICATION]`. For a team set, also read the company set of the same period, since it is the only valid source of `Contributes to` links.
 4. If the previous period's set exists and is `closed`, read its **Period Close**. Offer the carried-over hypotheses and KRs as starting options.
 
 ## Import (`from=…` or pasted text)
 
-Map the document onto the template faithfully: objectives, KRs, baselines, targets, owners. **Do not improve the content while importing.** List the quality problems you see (using the coaching smells) in a short report, and offer to fix them in an interview afterwards. For company sets with `agent_writes: propose`, those fixes become Proposals.
+Map the document onto the template faithfully: objectives, KRs, baselines, targets, owners. **Do not improve the content while importing.** List the quality problems you see (using the coaching smells) in a short report. For a team set, offer to fix them in an interview afterwards. For the company copy, record them under **Import Notes** for the company OKR owner, and do nothing else with them.
 
 ## Interview (team set)
 
@@ -58,7 +60,7 @@ Resolve `team-okrs-template` or `company-okrs-template` through the template sta
 **Objectives**: <n> · **KRs**: <n> (<leading>/<lagging>; <n> with baseline)
 **Ladder**: <n>/<n> team KRs contribute to a company KR; <n> team-local; <n> weak links flagged
 **Guardrails**: <n>
-**Proposals to company**: <n>
+**Company impact notes**: <n>
 **Orphans found**: <n> (see down-propagation)
 
 **Next**: __SPECKIT_COMMAND_OKR_FRAME__ to frame a bet against one of these KRs, or __SPECKIT_COMMAND_OKR_STATUS__ to see the tree.
@@ -67,5 +69,5 @@ Resolve `team-okrs-template` or `company-okrs-template` through the template sta
 ## Guardrails
 
 - Never modify source code or specs.
-- Never author company OKRs unless the company level's `agent_writes` is `confirm`.
+- Never author or change company OKRs: import them, read-only.
 - Never invent baselines or owners.

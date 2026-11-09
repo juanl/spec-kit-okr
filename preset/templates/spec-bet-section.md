@@ -15,3 +15,9 @@
 **Scale stories (built only if validated)**: User Story [n], …
 **Guardrails**: [G-n / TG-n — metric must not cross limit]
 **Out of scope (this horizon)**: [problem-space boundaries]
+
+**Verification contract** (from the bet file; definitions are not changed here):
+
+| ID | Number | Source (owner) | Baseline | Validated / Refuted if | Measurable today? |
+|----|--------|----------------|----------|------------------------|-------------------|
+| [S-n / KR-n / G-n] | [definition] | [source] ([owner]) | [value, or how it is captured before exposure] | [threshold] / [threshold] | yes / instrument / blocked: [who unblocks it] / unknown: [who knows the source] |

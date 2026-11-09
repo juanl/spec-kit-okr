@@ -1,12 +1,13 @@
 # Company OKRs: [PERIOD]
 
+Read-only copy of the company OKRs. The extension never edits them: it reads them to know which company KR each team KR, and each bet, impacts. Changes happen in the source and arrive here with the next import or sync.
+
 - **Level**: company
 - **Period**: [2027-Q1]
-- **Status**: draft | active | closed
-- **Source**: file | mcp:[server]
-- **Synced at**: [ISO timestamp, only for mcp mirrors]
+- **Status**: [as stated by the source: draft | active | closed]
+- **Source**: file | mcp:[server] — [where the company OKRs are owned, e.g. "OKR tool", "leadership doc"]
+- **Synced at**: [ISO timestamp of the last import or MCP read]
 - **Owner**: [role]
-- **Last check-in**: [ISO date, or "none"]
 
 ## Objectives
 
@@ -16,28 +17,12 @@
 
 ## Key Results
 
-| ID | Objective | Key Result | Baseline | Target | Deadline | Current | Score | Status | Owner |
-|----|-----------|------------|----------|--------|----------|---------|-------|--------|-------|
-| C-KR-1 | CO-1 | [outcome metric] | [value] | [value] | [date] | [value] | [0.0–1.0] | not_started / on_track / at_risk / off_track / done / dropped | [role] |
+| ID | Objective | Key Result | Baseline | Target | Deadline | Current | Status | Owner |
+|----|-----------|------------|----------|--------|----------|---------|--------|-------|
+| C-KR-1 | CO-1 | [outcome metric] | [value] | [value] | [date] | [value as stated by the source] | [as stated by the source] | [role] |
 
-## Team Contributions
+## Import Notes
 
-Filled from team check-ins: which team KRs claim to move each company KR, and how they are doing.
+Problems seen while importing (unclear metrics, missing baselines, KRs that are outputs). They are notes for the company OKR owner; the extension never acts on them.
 
-| C-KR | Team | Team KR | Team status | Last team check-in |
-|------|------|---------|-------------|--------------------|
-
-## Proposals
-
-Changes suggested by agents or teams. The company owner accepts or rejects them, and the agent never applies them.
-
-- [YYYY-MM-DD] — [from team / command] — [proposal] — [reason] — status: open / accepted / rejected
-
-## Check-in History
-
-| Date | Scores | Statuses | Notes |
-|------|--------|----------|-------|
-
-## Change Log
-
-- [YYYY-MM-DD] — [change] — [reason]
+- [YYYY-MM-DD] — [note]

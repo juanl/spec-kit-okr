@@ -33,13 +33,13 @@ With `dry-run` in the arguments (a rehearsal, a demo, or hypothetical numbers), 
 
 ## Setup
 
-1. Run `{SCRIPT}`, or use `feature=…` after validating that it is a real directory under `specs/`. Find the bet via `okr:<team>/H-n`. Read the bet file, `measurement-plan.md`, the team set (KRs, `Drives`, team guardrails), and earlier reviews in `FEATURE_DIR/okr-reviews/`.
-2. **No `measurement-plan.md`?** Without definitions and observation periods, numbers can't be read consistently. Say so, recommend `__SPECKIT_COMMAND_OKR_MEASURE__`, and only continue if the user provides the definitions in the conversation. Record them in the review file. Also check that the instrumentation the numbers need exists in the code (read-only). If it doesn't, ask where the numbers came from before recording anything.
+1. Run `{SCRIPT}`, or use `feature=…` after validating that it is a real directory under `specs/`. Find the bet via `okr:<team>/H-n`. Read the bet file (its **Verification Contract** holds the definitions and thresholds), `measurement-plan.md`, the team set (KRs, `Drives`, team guardrails), and earlier reviews in `FEATURE_DIR/okr-reviews/`.
+2. **No Verification Contract or no `measurement-plan.md`?** Without definitions, thresholds, and observation periods, numbers can't be read consistently. Say so, recommend `__SPECKIT_COMMAND_OKR_MEASURE__`, and only continue if the user provides the missing definitions in the conversation. Record them in the review file. Also check that the instrumentation the numbers need exists in the code (read-only). If it doesn't, ask where the numbers came from before recording anything.
 3. Load the scoring config: `scoring.aspirational_target` (0.7), and `scoring.thresholds.persevere` (0.7) / `iterate` (0.4).
 
 ## Collect
 
-For each KR, guardrail, and leading signal of a **live** story without a value, ask for it, one at a time, and show its definition from `measurement-plan.md`. Accept "unknown", which means the measurement is broken. Never estimate or invent values.
+For each contract row (KR, guardrail, and the signal of each **live** story) without a value, ask for it, one at a time, and show its definition and thresholds from the Verification Contract. Accept "unknown", which means the measurement is broken. Never estimate or invent values.
 
 ## Score
 
@@ -47,14 +47,15 @@ For each KR, guardrail, and leading signal of a **live** story without a value, 
   - **Baseline**: use the recorded one, or the control group when the plan declares a contemporaneous baseline. If neither exists, report `n/a — baseline missing`.
   - **Scorable only when readable**: before the observation period of `measurement-plan.md` has elapsed for at least one full sample, report `n/a — too early`, even if partial numbers exist.
 - **Guardrails** (bet and team): **breached** if the limit is crossed. When there is a control group, also compare against it, to tell whether the breach is caused by the feature.
-- **Leading signals**: **moved**, **flat**, or **unknown**, against the expected direction and against the control group if there is one.
+- **Leading signals**: **moved**, **flat**, or **unknown**, against the contract's thresholds (**Validated if** / **Refuted if**) and against the control group if there is one.
+- **Thresholds come from the contract.** Never loosen or tighten one during a review. If the user wants to, it becomes a Framing Decision in the bet file, recorded as made *after* seeing the data.
 
 ## Verdict on the hypothesis
 
 | Evidence | Verdict |
 |----------|---------|
 | Validation signals moved, **and** the KR moved directly is scorable and moving (and the KR it drives, once that is readable) | **validated** |
-| The bet's **refutation criterion** is met. For example: the signals moved but the KR stayed flat after the observation period, so the behavior changed without changing the outcome | **refuted** |
+| The bet's **refutation criterion**, computed from the contract rows, is met. For example: the signals moved but the KR stayed flat after the observation period, so the behavior changed without changing the outcome | **refuted** |
 | The signals stayed flat after the observation period. This is an adoption or execution problem: the hypothesis wasn't really tested | **inconclusive**. Iterate on the validation slice |
 | The KRs needed are not scorable yet | **too early** |
 | Measurement is broken | **inconclusive**. Fix the instrumentation first |

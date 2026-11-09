@@ -3,8 +3,8 @@ schema_version: "1.0"
 extension:
   id: okr
   name: "OKR Bets"
-  version: "0.1.0"
-  description: "Treat every spec as a bet on a team Key Result: living company and team OKRs (in the repo or via MCP), a hypothesis with a refutation criterion before /speckit.specify, measurement planned into the plan, and a verdict after launch that gates scaling"
+  version: "0.2.0"
+  description: "Treat every spec as a bet on a team Key Result: a hypothesis and a verification contract (every number the verdict needs, and whether it can be read today) before /speckit.specify, measurement planned into the plan, and a verdict after launch that gates scaling. Company OKRs are read-only context (repo or MCP); team OKRs stay living"
   category: "process"
   effect: "read-write"
   author: "juanl"
@@ -20,22 +20,22 @@ provides:
   commands:
     - name: speckit.okr.set
       file: commands/speckit.okr.set.md
-      description: "Create or update a company or team OKR set for a period (or import one), with ladder checks to company KRs"
+      description: "Create or update the team OKR set for a period, with ladder checks to company KRs; import a read-only copy of the company OKRs"
     - name: speckit.okr.frame
       file: commands/speckit.okr.frame.md
-      description: "Frame a feature as a bet: the team KR it should move, the hypothesis, how it would be refuted, guardrails, candidate ideas"
+      description: "Frame a feature as a bet: the team KR it should move, the hypothesis, how it would be refuted, the verification contract, guardrails, candidate ideas"
     - name: speckit.okr.align
       file: commands/speckit.okr.align.md
       description: "Check that the spec tests its bet: validation slice as P1, scale stories gated, guardrails covered; frames the bet post-hoc if needed"
     - name: speckit.okr.measure
       file: commands/speckit.okr.measure.md
-      description: "Make the bet readable on launch day: definitions, signals, instrumentation, baselines, attribution, calendar — fed into plan.md"
+      description: "Make the bet readable on launch day: turn the verification contract into capture, instrumentation, baselines, attribution, calendar — fed into plan.md"
     - name: speckit.okr.review
       file: commands/speckit.okr.review.md
       description: "Bet review after launch: score KRs, read signals and guardrails, verdict on the hypothesis that gates the scale stories"
     - name: speckit.okr.checkin
       file: commands/speckit.okr.checkin.md
-      description: "Team or company check-in: roll up bet verdicts, update KR statuses, propose changes upward, flag orphaned work, close a period"
+      description: "Team check-in: roll up bet verdicts, update KR statuses, note the impact on company KRs, flag orphaned work, close a period"
     - name: speckit.okr.status
       file: commands/speckit.okr.status.md
       description: "Read-only OKR tree: company → team KRs → hypotheses → specs, with statuses, staleness, and orphans"
@@ -43,7 +43,7 @@ provides:
   templates:
     - name: company-okrs-template
       file: templates/company-okrs-template.md
-      description: "Company OKR set for a period"
+      description: "Read-only copy of the company OKRs for a period"
     - name: team-okrs-template
       file: templates/team-okrs-template.md
       description: "Team OKR set for a period, with hypotheses and check-ins"
@@ -64,7 +64,7 @@ hooks:
   before_specify:
     command: speckit.okr.frame
     optional: true
-    prompt: "Before writing the spec: which team KR should this move, and what result would prove the idea wrong? (OKR bet framing, ~6 questions; mode=lite for 3)"
+    prompt: "Before writing the spec: which team KR should this move, what result would prove the idea wrong, and can we read that result today? (OKR bet framing, ~7 questions; mode=lite for 3)"
     description: "Frame the feature as a bet on a team Key Result so the spec is written as the initiative that tests it"
   after_specify:
     command: speckit.okr.align

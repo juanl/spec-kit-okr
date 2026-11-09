@@ -1,6 +1,6 @@
 # Interview rules and Key Result quality (shared)
 
-Used by `/speckit.okr.set`, `/speckit.okr.frame`, and the post-hoc mode of `/speckit.okr.align`.
+Used by `/speckit.okr.set`, `/speckit.okr.frame`, the post-hoc mode of `/speckit.okr.align`, and `/speckit.okr.measure`.
 
 ## Interview rules
 
@@ -50,6 +50,35 @@ Ask for a Key Result as a single pre-filled card, so that one answer can settle 
 Reply "yes", edit any line, or replace the card.
 ```
 
+## Verification card
+
+The bet's **Verification Contract** lists every number the verdict depends on: the leading signals (`S-n`), the KRs, and the guardrails. Ask for it as a single pre-filled card with one block per number, so that one answer can settle the whole contract:
+
+```markdown
+**Recommended verification contract:**
+
+**S-1 — <signal>** (leading signal)
+- **Definition**: <what, unit, window, population; what is included or excluded>
+- **Source (owner)**: <where the number comes from> (<own team | other team | vendor>)
+- **Baseline**: <value + date, or "capture from <source> before <date>">
+- **Validated if** / **Refuted if**: <threshold> / <threshold>
+- **Measurable today?**: yes | instrument (<what is missing>) | blocked (<who unblocks it>) | unknown (<who knows the source>)
+
+**KR-n — …** (key result)
+**G-n — …** (guardrail: only **Refuted if**, the limit that stops the bet)
+
+Reply "yes", edit any line, or replace a block.
+```
+
+Rules:
+
+- **Pre-fill from context, never invent.** Take definitions and baselines from the team set, the code, configs, and dashboards you can read. Propose a threshold only when it derives from something recorded (the KR target, the refutation criterion, a stated evidence number), and say where it comes from. Otherwise write `[NEEDS CLARIFICATION: <who decides>]`.
+- **Look beyond product analytics.** A number may come from APM or tracing (OpenTelemetry, Datadog, New Relic, Grafana), logs, a database query, a BI tool, a survey, support tooling, or a third party's API or report. Name the system and who controls it.
+- **Measurable today?** is inferred, never asked: `yes` if the source exists and already captures the number; `instrument` if your team can add it; `blocked` if it depends on another team or a vendor; `unknown` if nobody has identified the source yet (name who can find out). A `blocked` row needs an owner and a date to count as planned; an `unknown` row is not readable until its source is named.
+- **Refuted is not "the change didn't work".** If the leading signal does not move, the hypothesis was never tested: that is `iterate` / `inconclusive`. **Refuted if** describes the hypothesis failing: the signal moved as intended, and the outcome (KR) did not follow, or a guardrail shows the gain was not real. Keep the signal's own threshold in **Validated if**, and put "signal did not move" in the Decision Rules as iterate.
+- **The refutation criterion must be computable from the rows.** If it mentions a number that has no row, add the row. If it can only be read from a `blocked` row, say so: the bet has no verdict until that row is unblocked.
+- **One definition per number.** Later commands extend the contract (instrumentation, attribution) but never redefine a row. A change of definition is a Framing Decision, and it invalidates the recorded baseline.
+
 ## Coaching smells
 
 Correct weak KRs instead of accepting them silently. Explain the problem in one line, and offer a rewrite as the recommended answer:
@@ -71,7 +100,7 @@ Correct weak KRs instead of accepting them silently. Explain the problem in one 
 
 Re-run this check every time an Objective, a KR, or a `Contributes to` link changes. A team KR must plausibly move the **company KR** it names, not just sound related to that company Objective. For example, winning new enterprise deals does not move a net-revenue-retention KR, which measures existing customers.
 
-When the link is weak, say so in one line. Then offer three options: a closer company KR, "none — team-local", or a **proposal** to the company level (see `agent_writes`) to add the missing KR. A weak ladder is worth surfacing to whoever owns the company OKRs.
+When the link is weak, say so in one line. Then offer three options: a closer company KR, "none — team-local", or a **Company Impact Note** in the team set for whoever owns the company OKRs (for example, a company KR that seems to be missing). Never write to the company OKRs.
 
 ## Statistics
 

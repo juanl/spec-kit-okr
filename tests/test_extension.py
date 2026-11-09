@@ -65,18 +65,17 @@ def test_templates_exist():
 SECTIONS = {
     "templates/team-okrs-template.md": [
         "## Objectives", "## Key Results", "## Team Guardrails", "## Hypotheses",
-        "## Check-in History", "## Proposals to Company", "## Change Log", "## Period Close",
+        "## Check-in History", "## Company Impact Notes", "## Change Log", "## Period Close",
     ],
-    "templates/company-okrs-template.md": [
-        "## Objectives", "## Key Results", "## Team Contributions", "## Proposals",
-        "## Check-in History", "## Change Log",
-    ],
+    "templates/company-okrs-template.md": ["## Objectives", "## Key Results", "## Import Notes"],
     "templates/bet-template.md": [
         "## Hypothesis", "## Validation", "## Guardrails", "## Candidate Ideas", "## Boundaries",
-        "## Measurement Readiness", "## Decision Rules", "## Stories", "## Quality Gate",
+        "## Verification Contract", "## Decision Rules", "## Stories", "## Quality Gate",
         "## Open Questions", "## Framing Decisions", "## Reviews",
     ],
-    "templates/measurement-plan-template.md": ["## Initiative Signals", "## Baseline Capture"],
+    "templates/measurement-plan-template.md": [
+        "## Capture", "## Dependencies", "## Initiative Signals", "## Baseline Capture",
+    ],
 }
 
 
@@ -88,9 +87,24 @@ def test_template_sections(template):
 
 
 @pytest.mark.parametrize("header", ["Source", "Synced at", "Last check-in", "Status"])
-def test_okr_sets_have_living_headers(header):
-    for name in ("team-okrs-template.md", "company-okrs-template.md"):
-        assert f"- **{header}**:" in (ROOT / "templates" / name).read_text(), (name, header)
+def test_team_set_has_living_headers(header):
+    assert f"- **{header}**:" in (ROOT / "templates" / "team-okrs-template.md").read_text(), header
+
+
+@pytest.mark.parametrize("header", ["Source", "Synced at", "Status"])
+def test_company_copy_has_sync_headers(header):
+    assert f"- **{header}**:" in (ROOT / "templates" / "company-okrs-template.md").read_text(), header
+
+
+def test_company_level_is_read_only():
+    # Company OKRs are context: no write policy, no write tools, no company check-in.
+    config = yaml.safe_load((ROOT / "okr-config.template.yml").read_text())
+    company = config["levels"]["company"]
+    assert "agent_writes" not in company
+    assert set(company["mcp"]["tools"]) == {"read"}
+    assert "level=team|company" not in (ROOT / "commands/speckit.okr.checkin.md").read_text()
+    for path in ROOT.glob("commands/*.md"):
+        assert "Proposals to company" not in path.read_text(), path.name
 
 
 def test_preset_manifest_and_files():
@@ -105,3 +119,22 @@ def test_bet_token_is_consistent():
     # frame writes it, the preset and align read it.
     for path in ("commands/speckit.okr.frame.md", "commands/speckit.okr.align.md", "preset/commands/speckit.specify.okr.md"):
         assert "okr:<team>/H-n" in (ROOT / path).read_text(), path
+
+
+def test_verification_contract_is_the_shared_definition():
+    # frame writes the contract; the preset, align, measure and review read it.
+    for path in (
+        "commands/speckit.okr.frame.md", "commands/speckit.okr.align.md",
+        "commands/speckit.okr.measure.md", "commands/speckit.okr.review.md",
+        "preset/commands/speckit.specify.okr.md", "templates/bet-template.md",
+    ):
+        assert "Verification Contract" in (ROOT / path).read_text(), path
+    bet = (ROOT / "templates/bet-template.md").read_text()
+    for column in ("Source (owner)", "Baseline", "Validated if", "Refuted if", "Measurable today?"):
+        assert column in bet, column
+    assert "BLOCKED" in (ROOT / "commands/speckit.okr.frame.md").read_text()
+
+
+def test_versions_match():
+    preset = PresetManifest(ROOT / "preset" / "preset.yml")
+    assert MANIFEST.version == preset.version

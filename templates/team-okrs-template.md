@@ -42,9 +42,11 @@ The team's bets on how to move each KR. Each one is tested by one or more specs.
 | Date | KR scores | Hypotheses | Guardrails | Decisions |
 |------|-----------|------------|------------|-----------|
 
-## Proposals to Company
+## Company Impact Notes
 
-- [YYYY-MM-DD] — [proposal sent to company level] — [status]
+Findings for whoever owns the company OKRs: weak ladders, company KRs no team KR moves, team results that change the outlook of a company KR. The extension only records them; the team takes them to the company conversation.
+
+- [YYYY-MM-DD] — [C-KR-n] — [note]
 
 ## Change Log
 

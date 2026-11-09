@@ -2,6 +2,33 @@
 
 All notable changes to this extension are documented here. This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-11-09
+
+Shaped by a real team's OKRs and a real bet framed by its PM.
+
+### Added
+
+- **Verification contract** in every bet: one row per number the verdict depends on (leading signals `S-n`, KRs, guardrails), each with a definition, source and owner, baseline, validated/refuted thresholds, and whether it can be measured today (`yes`, `instrument`, `blocked`, `unknown`). `frame` asks for it as one pre-filled card, before the spec.
+- **BLOCKED** gate result in `frame`, for a verdict that cannot be computed yet. It names what unblocks it.
+- **Readiness mode** in `measure` (`bet=H-n`, or no `plan.md`): sources, baselines, attribution, and blockers before any spec or plan exists.
+- `measure` looks for numbers beyond product analytics: APM and tracing, logs, databases, BI, and third parties. Third-party rows become dependencies.
+
+### Changed
+
+- **Company OKRs are read-only context.** No company write policy, no company proposals, no company check-in. `set level=company` only imports a copy, and quality problems go to **Import Notes**. Weak ladders and the impact on company KRs go to the team set's new **Company Impact Notes**.
+- The spec (via the `okr-bet` preset), `align`, `measure`, and `review` read definitions and thresholds from the contract and never redefine them. `review` never moves a threshold after seeing the data.
+- A refutation criterion has to test the hypothesis, not just the change: "the signal didn't move" means iterate.
+- The measurement plan template uses contract IDs, and adds Capture and Dependencies sections.
+
+### Removed
+
+- The bet's Measurement Readiness table, replaced by the verification contract.
+- The company template's Team Contributions, Proposals, Check-in History, and Change Log sections.
+
+### Fixed
+
+- The measurement plan template pointed to `okr.md`, a file from an earlier design.
+
 ## [0.1.0] - 2026-10-23
 
 First release.

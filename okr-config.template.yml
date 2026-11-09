@@ -8,19 +8,14 @@ horizon: "quarter"            # quarter | half | year
 team: ""                      # your team id, e.g. "reporting"
 
 levels:
-  company:
-    source: "file"            # file | mcp
-    # file source: the source of truth. mcp source: a local read-only mirror.
+  company:                    # always read-only: context for where the team's work impacts
+    source: "file"            # file: an imported copy · mcp: read from your OKR tool, mirrored locally
     path: ".specify/okr/company/{period}.md"
-    agent_writes: "propose"   # none | propose | confirm — agents never edit company OKRs unless "confirm"
-    cadence_days: 30
+    stale_days: 30            # warn when a file import is older than this
     mcp:
       server: ""              # MCP server name as configured in your agent (e.g. "okr-tool")
-      tools:                  # operation → tool name exposed by that server
-        read: ""
-        update_kr: ""
-        add_checkin: ""
-        propose: ""
+      tools:
+        read: ""              # the only operation used at the company level
   team:
     source: "file"
     path: ".specify/okr/teams/{team}/{period}.md"

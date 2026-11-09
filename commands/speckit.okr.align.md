@@ -52,7 +52,7 @@ In order:
 ## Post-hoc mode
 
 1. From the spec, draft the hypothesis it implicitly tests: which behavior change, for whom, and which team KR (from the team set) it should show in. Most Success Criteria are acceptance thresholds, not outcomes. Say so where it applies.
-2. Run the `__SPECKIT_COMMAND_OKR_FRAME__` interview, limited to what the spec cannot answer. That usually means the target KR, confidence and evidence, the refutation criterion, guardrails, and baselines.
+2. Run the `__SPECKIT_COMMAND_OKR_FRAME__` interview, limited to what the spec cannot answer. That usually means the target KR, confidence and evidence, the refutation criterion, the verification contract, and guardrails.
 3. If the spec's stories **cannot move** the outcome the user wants, say so plainly, and propose the missing initiative as a new story. For example, a reminder sent *after* the due date cannot raise on-time completion, so the bet needs an earlier reminder.
 4. Write the bet file and the team-set hypothesis row, as `__SPECKIT_COMMAND_OKR_FRAME__` would.
 
@@ -72,6 +72,8 @@ In order:
    **Scale stories (built only if validated)**: User Story <n>, …
    **Guardrails**: G-1 …; team TG-1 …
    **Out of scope (this horizon)**: …
+
+   **Verification contract** (from the bet file): one row per S-n / KR-n / G-n
    ```
 
 2. **Stages**: classify each user story as one of:
@@ -86,14 +88,15 @@ In order:
    - With low confidence, any `scale` story at P1 is a contradiction.
    - `enabling` and `protects` stories take the priority of what they serve.
    - `none` stories are proposed for out-of-scope.
-3. **Leading signals**: every `validation` story needs a behavior that can be observed within days, so the first review has something to read. `scale` stories need one only if `initiatives.require_leading_signal` is `true`.
-4. **Candidate ideas**: each `CI-n` either became a story or has a recorded reason for being dropped.
-5. **Success Criteria**:
-   - Each SC maps to a KR, a guardrail, a story's leading signal, or is explicitly an acceptance threshold.
+3. **Leading signals**: every `validation` story needs a signal from the bet's **Verification Contract** (`S-n`) that can be observed within days, so the first review has something to read. A signal the spec names but the contract lacks is a finding: propose adding the row to the bet (with a verification card), never define it only in the spec. `scale` stories need one only if `initiatives.require_leading_signal` is `true`.
+4. **Readable verdict**: every contract row the refutation criterion depends on is either `yes`, or has a requirement in the validation slice that makes it readable before exposure (instrumentation FR, or a dependency on whoever unblocks a `blocked` row). Otherwise the validation slice can ship without producing a verdict.
+5. **Candidate ideas**: each `CI-n` either became a story or has a recorded reason for being dropped.
+6. **Success Criteria**:
+   - Each SC maps to a contract row (KR, guardrail, or signal) by its ID, or is explicitly an acceptance threshold. Its threshold matches the contract.
    - The KR the bet moves needs at least one SC.
    - So does every guardrail.
-6. **Chains**: use only the `Drives` links declared in the team set. Never infer new chains.
-7. **Feasibility**: compare the bet's expected contribution with what the stories can plausibly reach. When the spec is much smaller than the claim, flag it.
+7. **Chains**: use only the `Drives` links declared in the team set. Never infer new chains.
+8. **Feasibility**: compare the bet's expected contribution with what the stories can plausibly reach. When the spec is much smaller than the claim, flag it.
 
 ## Findings
 
@@ -103,6 +106,8 @@ Present a single table. Each row gives the finding, the evidence, and the propos
 - missing validation slice;
 - spec cannot move the KR;
 - missing leading signal;
+- unreadable verdict;
+- signal outside the contract;
 - dropped candidate;
 - orphan SC;
 - unmeasured guardrail;
@@ -117,8 +122,8 @@ With approval:
 
 - **In `spec.md`**, make minimal edits:
   - priorities;
-  - one line per story with `**Stage**: <stage> · Leading signal: <…>`;
-  - SC tags `*(→ KR-n | G-n | signal US-n | acceptance threshold)*`, plus any accepted new SCs;
+  - one line per story with `**Stage**: <stage> · Signal: <S-n>`;
+  - SC tags `*(→ KR-n | G-n | S-n | acceptance threshold)*`, plus any accepted new SCs;
   - the Hypothesis & Bet section.
 
   Never renumber stories, FRs, or SCs.
@@ -139,7 +144,7 @@ With approval:
 **Mode**: bind | post-hoc | enabling
 **Bet**: okr:<team>/H-n — <hypothesis> → KR-n <(contributes to C-KR-m)>
 **Stories**: <n> validation, <n> scale, <n> enabling, <n> protects, <n> none · **P1**: US-<n> <(validation slice ✓ | ⚠)>
-**Coverage**: KR has SC <✓/✗>; guardrails protected <n>/<n>
+**Coverage**: KR has SC <✓/✗>; guardrails protected <n>/<n> · **Verdict readable at launch**: yes | no (<row>)
 **Findings**: <counts> · **Spec updated**: yes (<n> edits) | no
 
 **Next**: __SPECKIT_COMMAND_CLARIFY__ if open questions remain; otherwise __SPECKIT_COMMAND_PLAN__, then __SPECKIT_COMMAND_OKR_MEASURE__.
