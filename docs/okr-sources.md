@@ -77,7 +77,14 @@ The opposite also counts. A company KR that was added or changed in the source m
 
 ## Language
 
-Converse in the user's language. Artifact body text follows `output.artifact_language` (`auto` = the conversation's language). Headings, table columns, IDs, status values, and `[NEEDS CLARIFICATION: …]` stay in English, because the commands parse them.
+Headings, table columns, IDs, status values, and `[NEEDS CLARIFICATION: …]` stay in English, because the commands parse them. Everything else (replies, questions, report text, artifact body text) uses one language, resolved once per run:
+
+1. `output.artifact_language`, when it names a language (e.g. `es`, `en`, `pt-BR`).
+2. With `auto` (the default), the language of the user's own words in this conversation. Arguments such as `bet=H-1`, IDs, paths, and pasted data are not words: they say nothing about the language.
+3. When the user wrote no words, the body text of the artifacts this command reads, in order: the bet file, `spec.md`, the team set. A command invoked by a hook, or with arguments only, lands here.
+4. English, only when none of the above has body text.
+
+When editing an existing artifact, keep its language, even if this run's language differs: never mix two languages in one artifact. Say so once if they differ.
 
 ## Safety
 

@@ -2,6 +2,13 @@
 
 All notable changes to this extension are documented here. This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-11-11
+
+### Fixed
+
+- With `artifact_language: auto`, a command run with arguments only (e.g. `measure bet=H-1`, or from a hook) answered in English on a project written in another language. `auto` now falls back to the language of the bet file, the spec, or the team set, and English comes last. Edits keep the artifact's existing language.
+- The README now shows how to install from the release zips, and how to upgrade with `add --force`. `specify extension remove` deletes `okr-config.yml`, so it is not part of an upgrade.
+
 ## [0.2.0] - 2026-11-09
 
 Shaped by a real team's OKRs and a real bet framed by its PM.

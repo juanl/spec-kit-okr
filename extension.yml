@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: okr
   name: "OKR Bets"
-  version: "0.2.0"
+  version: "0.2.1"
   description: "Treat every spec as a bet on a team Key Result: a hypothesis and a verification contract (every number the verdict needs, and whether it can be read today) before /speckit.specify, measurement planned into the plan, and a verdict after launch that gates scaling. Company OKRs are read-only context (repo or MCP); team OKRs stay living"
   category: "process"
   effect: "read-write"

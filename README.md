@@ -65,10 +65,21 @@ In a typical spec, the Success Criteria are acceptance thresholds ("users can ex
 
 Requires Spec Kit `>= 0.9.0` (tested with 0.16.2).
 
+From the release:
+
 ```bash
-specify extension add --dev /path/to/spec-kit-okr           # the extension
-specify preset add --dev /path/to/spec-kit-okr/preset       # recommended: Hypothesis & Bet section in specs
+specify extension add okr --from https://github.com/juanl/spec-kit-okr/releases/download/v0.2.1/spec-kit-okr-0.2.1.zip
+specify preset add --from https://github.com/juanl/spec-kit-okr/releases/download/v0.2.1/spec-kit-okr-bet-preset-0.2.1.zip   # recommended: Hypothesis & Bet section in specs
 ```
+
+From a local checkout:
+
+```bash
+specify extension add --dev /path/to/spec-kit-okr
+specify preset add --dev /path/to/spec-kit-okr/preset
+```
+
+**Upgrading**: run the same `add` command with `--force`. It keeps your `okr-config.yml` (and `okr-config.local.yml`). Don't run `specify extension remove okr` first: removing the extension deletes its config, and the next `add` scaffolds an empty one. Your OKR sets, bets, and specs live outside the extension folder and are never touched.
 
 The **`okr-bet` preset** composes with your spec template (`append`) and with `/speckit.specify` (`append`), so it doesn't replace anything. Without it, `/speckit.okr.align` inserts the section afterwards.
 
@@ -99,7 +110,7 @@ levels:
 | `key_results.min` / `max` | 2 / 4 | KRs per objective |
 | `scoring.thresholds` | 0.7 / 0.4 | Persevere / iterate thresholds |
 | `interview.max_questions` | 8 | Primary questions (follow-ups don't count). `mode=lite` on `frame` uses 3 |
-| `output.artifact_language` | `auto` | Body text language. Headings, IDs and statuses stay in English |
+| `output.artifact_language` | `auto` | Body text language. `auto` follows your words, or the bet and spec when a command runs with arguments only. Headings, IDs and statuses stay in English |
 
 > Removing and re-adding the extension deletes `.specify/extensions/okr/`, including your config. Keep a copy, or put your overrides in `okr-config.local.yml` and back it up.
 

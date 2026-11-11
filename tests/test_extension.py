@@ -138,3 +138,10 @@ def test_verification_contract_is_the_shared_definition():
 def test_versions_match():
     preset = PresetManifest(ROOT / "preset" / "preset.yml")
     assert MANIFEST.version == preset.version
+
+
+def test_language_auto_falls_back_to_artifacts():
+    rules = (ROOT / "docs" / "okr-sources.md").read_text(encoding="utf-8")
+    section = rules.split("## Language", 1)[1].split("\n## ", 1)[0]
+    assert "bet file" in section and "spec.md" in section, "auto must fall back to the artifacts' language"
+    assert section.index("bet file") < section.index("English, only"), "English is the last fallback"

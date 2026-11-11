@@ -43,4 +43,4 @@ interview:
   follow_ups_per_question: 1  # do not count toward the cap
 
 output:
-  artifact_language: "auto"   # body text language; headings, IDs and statuses stay in English
+  artifact_language: "auto"   # "auto" = your words, else the bet/spec language; headings, IDs and statuses stay in English
